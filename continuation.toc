@@ -1,0 +1,20 @@
+
+(deftype Continuation [cont-fn]
+  Function
+  (invoke [ev c]
+    (cont-fn c))
+
+  Container
+  (wrap [_ v]
+    (Continuation (fn [c]
+                    (c v))))
+
+  (map [_ f]
+    (Continuation (fn [c]
+                    (cont-fn (fn [x]
+                               (c (f x)))))))
+
+  (flat-map [mv mf]
+    (Continuation (fn [c]
+                    (mv (fn [v]
+                          ((mf v) c)))))))
