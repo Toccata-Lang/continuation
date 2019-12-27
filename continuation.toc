@@ -1,5 +1,9 @@
 
 (deftype Continuation [cont-fn]
+  Stringable
+  (string-list [_]
+    (list "<Continuation>"))
+
   Function
   (invoke [ev c]
     (cont-fn c))
@@ -18,3 +22,11 @@
     (Continuation (fn [c]
                     (mv (fn [v]
                           ((mf v) c)))))))
+
+(defn break [v]
+  (Continuation (fn [c]
+                  v)))
+
+(defn continue [v]
+  (Continuation (fn [c]
+                  (c v))))
